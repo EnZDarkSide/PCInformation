@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:test"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:vm="clr-namespace:WPF_TEST.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
     <Window.DataContext>
-        <vm:ProgramViewModel/>
+        <vm:AppViewModel/>
     </Window.DataContext>
     
         <Grid Margin="0,0,2,0">
@@ -17,7 +17,6 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-            
         <Grid.RowDefinitions>
             <RowDefinition Height="0.15*" />
             <RowDefinition Height="0.85*" />
@@ -26,24 +25,57 @@
         <TextBlock Text="Приложения" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="35"  Grid.Row="0" Grid.Column="0" Margin="5" />
         <TextBlock Text="Информация" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="35" Grid.Row="0" Grid.Column="1" Margin="5" />
 
-        <ListBox HorizontalContentAlignment="Stretch" SelectedItem="{Binding SelectedApp}" Name="listbox_apps" ItemsSource="{Binding AppList}" Grid.Row="1" Grid.Column="0" BorderBrush="Black">
+        <ListBox ItemsSource="{Binding AppList}" SelectedItem="{Binding SelectedApp}"
+                 VerticalAlignment="Top"
+                 HorizontalContentAlignment="Stretch"
+                 Grid.Row="1" Grid.Column="0">
+            <ListBox.Template>
+                <ControlTemplate>
+                    <DockPanel LastChildFill="True">
+                        <Grid DockPanel.Dock="Top" Height="30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="1">Process id</Label>
+                            <Label Grid.Column="2">Process name</Label>
+                        </Grid>
+                        <ScrollViewer>
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </DockPanel>
+                </ControlTemplate>
+            </ListBox.Template>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" FontSize="18"/>
+                    <Grid Margin="0,1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <CheckBox Grid.Column="0"/>
+                        <TextBlock Text="{Binding Id}" Grid.Column="1"/>
+                        <TextBlock Text="{Binding Name}" Grid.Column="2"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="0.7*"/>
                 <RowDefinition Height="0.15*"/>
                 <RowDefinition Height="0.15*"/>
-                <RowDefinition Height="0.6*"/>
             </Grid.RowDefinitions>
-     
+
+            <lvc:CartesianChart Series="{Binding SelectedApp.ProcessorLoading}" Grid.Row="0" Margin="10" IsEnabled="False"/>
+
             <TextBlock
-                Foreground="Black" FontSize="13" HorizontalAlignment="Stretch" Margin="15 0 0 0"
-                Grid.Row="0" VerticalAlignment="Center" Text="{Binding SelectedApp.Elapsed, StringFormat=Время работы: {0}}"/>
+                Foreground="Black" FontSize="14" HorizontalAlignment="Stretch" Margin="15 0 0 0"
+                Grid.Row="2" VerticalAlignment="Center" Text="{Binding SelectedApp.Elapsed, StringFormat=Время работы: {0}}"/>
         </Grid>
     </Grid> 
 </Window>
