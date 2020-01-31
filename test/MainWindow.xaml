@@ -55,8 +55,8 @@
                             <ColumnDefinition Width="80"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        
-                        <CheckBox Grid.Column="0"/>
+
+                        <CheckBox Grid.Column="0" IsChecked="{Binding isSelected}"/>
                         <TextBlock Text="{Binding Id}" Grid.Column="1"/>
                         <TextBlock Text="{Binding Name}" Grid.Column="2"/>
                     </Grid>

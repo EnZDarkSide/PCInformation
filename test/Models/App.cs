@@ -19,8 +19,10 @@ namespace WPF_TEST.Models
 
         public int Id => Process.Id;
         public string Name => Process.ProcessName;
+        public PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         public string Elapsed { get; set; }
         public Process Process { get; set; }
+        public bool isSelected { get; set; };
 
         public SeriesCollection ProcessorLoading { get; private set; }
 
@@ -49,7 +51,7 @@ namespace WPF_TEST.Models
             return timer;
         }
 
-        // Обновление строки таймера
+        // Обновление по таймеру
         private void t_Tick(object sender, EventArgs e)
         {
             Elapsed = UpdateElapsed();
@@ -58,19 +60,21 @@ namespace WPF_TEST.Models
 
         private void UpdateChartSeries()
         {
+            // Удаляем значение с левого края, если точек больше 10
             if (ProcessorLoading[0].Values.Count >= 10)
                 ProcessorLoading[0].Values.RemoveAt(0);
 
-            // TODO: Сделать получение информации о загрузке процессора приложением.
-            //https://stackoverflow.com/questions/9259772/getting-cpu-usage-of-a-process-in-c-sharp <- TODO: исправить на это
-            ProcessorLoading[0].Values.Add(new ObservableValue(rand.Next(0, 100)));
-        }
+            var procLoading = cpuCounter.NextValue();
 
+            //Добавление в график значения в конец
+            ProcessorLoading[0].Values.Add(new ObservableValue(procLoading));
+        }
+        
         private string UpdateElapsed()
         {
             TimeSpan elpsd = DateTime.Now - start;
             var elapsedString = Convert.ToString(string.Format("{0:00}:{1:00}:{2:00}",
-                elpsd.TotalHours, elpsd.TotalMinutes, elpsd.TotalSeconds));
+                elpsd.Hours, elpsd.Minutes, elpsd.Seconds));
             //Оповещаем подписчиков через событие PropertyChanged. Знак вопроса заменяет конструкцию if(PropertyChanged != null)
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Elapsed"));
             return elapsedString;
