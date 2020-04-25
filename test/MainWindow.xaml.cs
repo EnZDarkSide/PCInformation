@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPF_TEST;
 
 namespace test
 {
@@ -22,7 +23,15 @@ namespace test
     {
         public MainWindow()
         {
-            InitializeComponent();
+            AuthWindow authWindow = new AuthWindow();
+
+            if(authWindow.ShowDialog() == true)
+            {
+                if(authWindow.Password == "root")
+                    InitializeComponent();
+                else
+                    MessageBox.Show("Введен неверный пароль");
+            }
         }
     }
 }
