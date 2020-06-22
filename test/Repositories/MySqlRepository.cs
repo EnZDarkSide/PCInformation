@@ -18,7 +18,7 @@ namespace WPF_TEST.Repositories
         public static void SaveReport(List<App> appList)
         {
             connection.Open();
-            if (connection != null && connection.State == ConnectionState.Open)
+            try
             { 
                 string newTableName = DateTime.Now.ToString();
                 MySqlCommand createTableSqlCmd = new MySqlCommand($"CREATE TABLE `{newTableName}` (AppName varchar(255) NOT NULL, ElapsedTime time NOT NULL);", connection);
@@ -30,6 +30,9 @@ namespace WPF_TEST.Repositories
 
                 MessageBox.Show($"Добавлено значений : {rowCount}");
                 connection.Close();
+            } catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Ошибка");
             }
         }
     }
