@@ -21,17 +21,39 @@ namespace test
     /// </summary>
     public partial class MainWindow : Window
     {
+        AuthWindow authWindow;
         public MainWindow()
         {
-            AuthWindow authWindow = new AuthWindow();
-
-            if(authWindow.ShowDialog() == true)
-            {
-                if(authWindow.Password == "root")
-                    InitializeComponent();
-                else
-                    MessageBox.Show("Введен неверный пароль");
-            }
+            InitializeComponent();
         }
+
+        // У каждого окна есть метод OnClosing, который вызывается после нажатия, к примеру, крестика
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            do
+            {
+                //Будем вызывать окно авторизации, пока пароль не будет верным
+                authWindow = new AuthWindow();
+                //Если окно закрыто на кнопку OK
+                if (authWindow.ShowDialog() == true)
+                    if (authWindow.Password == "root")
+                    {
+                        //Используем изначальную версию закрытия окна, как если бы всего этого переопределения не было
+                        base.OnClosing(e);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Введен неверный пароль");
+                        e.Cancel = true;
+                    }
+                else
+                {
+                    //Отменяем закрытие окна
+                    e.Cancel = true;
+                    break;
+                }
+            } while (authWindow.Password != "root");
+        }
+
     }
 }
